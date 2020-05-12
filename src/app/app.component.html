@@ -12,8 +12,8 @@
   </div>
   <br>
   <div>
-    <button [disabled]="ownTransactions.length < 1" (click)="addUndo()">🠔 undo</button>
-    <button [disabled]="undoQueue.length < 1" (click)="addRedo()">redo 🠖</button>
+    <button (click)="addUndo()">🠔 undo</button>
+    <button (click)="addRedo()">redo 🠖</button>
   </div>
   <br>
   <div>

@@ -19,23 +19,32 @@ export class AppComponent {
   ownTransactions = [];
 
   addTransaction() {
-    this.transactionQueue.push('___' + this.transaction);
+    const transaction = { id: this.transaction, own: false };
     this.transaction = '';
-    this.ownTransactions = [...this.transactionQueue].reverse();
+    this.transactionQueue.push(transaction);
+    this.snapshot.push(transaction);
   }
 
   addOwnTransaction() {
-    const ownTransaction = '_x_' + this.ownTransaction;
-    this.transactionQueue.push(ownTransaction);
+    const transaction = { id: this.ownTransaction, own: true };
     this.ownTransaction = '';
-    this.ownTransactions = [...this.transactionQueue].reverse();
+    this.transactionQueue.push(transaction);
+    this.snapshot.push(transaction);
   }
 
   addUndo() {
-    const lastOwnTransaction = this.ownTransactions[this.ownTransactions.length - 1];
-    const undoTransaction = 'u' + lastOwnTransaction.slice(1);
-    this.undoQueue.push(undoTransaction);
-    this.transactionQueue.push(undoTransaction);
+    const reversedTrQueue = [...this.transactionQueue].reverse();
+    const lastOwnTr = reversedTrQueue.find(tr => tr.own && !tr.undo);
+    if (lastOwnTr) {
+      const undoTr = { ...lastOwnTr, id: lastOwnTr.id, undo: true };
+      this.transactionQueue.push(undoTr);
+      this.undoQueue.push(undoTr);
+      // rebuild snapshot
+      this.snapshot = [...this.transactionQueue].filter(tr => tr.id !== lastOwnTr.id);
+    }
+    // const undoTransaction = 'u' + lastOwnTransaction.slice(1);
+    // this.undoQueue.push(undoTransaction);
+    // this.transactionQueue.push(undoTransaction);
   }
 
   addRedo() {
